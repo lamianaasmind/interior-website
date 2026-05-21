@@ -16,6 +16,8 @@ export default function ProjectDetailPage() {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
   const [direction, setDirection] = useState(1);
+  const [isPaused, setIsPaused] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
 
   const gallery = project?.gallery || (project ? [project.img] : []);
 
@@ -51,12 +53,12 @@ export default function ProjectDetailPage() {
     return () => window.removeEventListener('keydown', handler);
   }, [lightboxOpen, lightboxNext, lightboxPrev]);
 
-  // Auto-advance slider every 8 seconds
+  // Auto-advance slider every 8 seconds, pausing if hovered
   useEffect(() => {
-    if (lightboxOpen || gallery.length <= 1) return;
+    if (lightboxOpen || gallery.length <= 1 || isPaused) return;
     const timer = setInterval(goNext, 8000);
     return () => clearInterval(timer);
-  }, [goNext, lightboxOpen, gallery.length]);
+  }, [goNext, lightboxOpen, gallery.length, isPaused]);
 
   const openLightbox = (idx) => {
     setLightboxIndex(idx);
@@ -74,9 +76,31 @@ export default function ProjectDetailPage() {
   }
 
   const slideVariants = {
-    enter: (dir) => ({ opacity: 0, x: dir > 0 ? 80 : -80 }),
-    center: { opacity: 1, x: 0, transition: { duration: 0.45, ease: 'easeOut' } },
-    exit: (dir) => ({ opacity: 0, x: dir > 0 ? -80 : 80, transition: { duration: 0.35, ease: 'easeIn' } })
+    enter: (dir) => ({
+      x: dir > 0 ? '100%' : '-100%',
+      opacity: 0,
+      scale: 1.02
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+      scale: 1,
+      transition: {
+        x: { type: 'tween', duration: 0.85, ease: [0.16, 1, 0.3, 1] },
+        opacity: { duration: 0.5, ease: 'easeOut' },
+        scale: { duration: 0.85, ease: [0.16, 1, 0.3, 1] }
+      }
+    },
+    exit: (dir) => ({
+      x: dir > 0 ? '-100%' : '100%',
+      opacity: 0,
+      scale: 0.98,
+      transition: {
+        x: { type: 'tween', duration: 0.85, ease: [0.16, 1, 0.3, 1] },
+        opacity: { duration: 0.5, ease: 'easeIn' },
+        scale: { duration: 0.85, ease: [0.16, 1, 0.3, 1] }
+      }
+    })
   };
 
   return (
@@ -157,9 +181,20 @@ export default function ProjectDetailPage() {
             </motion.div>
 
             {/* Main Slider */}
-            <div className="proj-slider-wrap">
-              <div className="proj-slider-stage" onClick={() => openLightbox(sliderIndex)}>
-                <AnimatePresence custom={direction} mode="wait">
+            <div 
+              className="proj-slider-wrap"
+              onMouseEnter={() => setIsPaused(true)}
+              onMouseLeave={() => setIsPaused(false)}
+            >
+              <div 
+                className="proj-slider-stage" 
+                onClick={() => {
+                  if (!isDragging) {
+                    openLightbox(sliderIndex);
+                  }
+                }}
+              >
+                <AnimatePresence custom={direction} mode="popLayout">
                   <motion.img
                     key={sliderIndex}
                     src={gallery[sliderIndex]}
@@ -170,6 +205,21 @@ export default function ProjectDetailPage() {
                     initial="enter"
                     animate="center"
                     exit="exit"
+                    drag="x"
+                    dragConstraints={{ left: 0, right: 0 }}
+                    dragElastic={0.6}
+                    onDragStart={() => setIsDragging(true)}
+                    onDragEnd={(e, info) => {
+                      const swipe = info.offset.x;
+                      if (swipe < -60) {
+                        goNext();
+                      } else if (swipe > 60) {
+                        goPrev();
+                      }
+                      setTimeout(() => setIsDragging(false), 50);
+                    }}
+                    style={{ cursor: 'grab' }}
+                    whileDrag={{ cursor: 'grabbing' }}
                   />
                 </AnimatePresence>
                 <div className="proj-slider-zoom-hint">
@@ -202,10 +252,19 @@ export default function ProjectDetailPage() {
                 {gallery.map((_, i) => (
                   <button
                     key={i}
-                    className={`proj-slider-dot${i === sliderIndex ? ' active' : ''}`}
+                    className="proj-slider-dot-container"
                     onClick={() => { setDirection(i > sliderIndex ? 1 : -1); setSliderIndex(i); }}
                     aria-label={`Go to image ${i + 1}`}
-                  />
+                  >
+                    {i === sliderIndex && (
+                      <motion.span
+                        layoutId="activeDot"
+                        className="proj-slider-dot-active"
+                        transition={{ type: 'spring', stiffness: 100, damping: 18 }}
+                      />
+                    )}
+                    <span className="proj-slider-dot-dot" />
+                  </button>
                 ))}
               </div>
             </div>
@@ -218,8 +277,16 @@ export default function ProjectDetailPage() {
                   className={`proj-thumb${i === sliderIndex ? ' active' : ''}`}
                   onClick={() => { setDirection(i > sliderIndex ? 1 : -1); setSliderIndex(i); }}
                   aria-label={`Thumbnail ${i + 1}`}
+                  style={{ position: 'relative' }}
                 >
                   <img src={img} alt={`thumb-${i}`} />
+                  {i === sliderIndex && (
+                    <motion.div
+                      layoutId="activeThumbBorder"
+                      className="proj-thumb-active-border"
+                      transition={{ type: 'spring', stiffness: 100, damping: 18 }}
+                    />
+                  )}
                 </button>
               ))}
             </div>
@@ -251,7 +318,7 @@ export default function ProjectDetailPage() {
                 </svg>
               </button>
 
-              <AnimatePresence custom={direction} mode="wait">
+              <AnimatePresence custom={direction} mode="popLayout">
                 <motion.img
                   key={lightboxIndex}
                   src={gallery[lightboxIndex]}
@@ -262,6 +329,21 @@ export default function ProjectDetailPage() {
                   initial="enter"
                   animate="center"
                   exit="exit"
+                  drag="x"
+                  dragConstraints={{ left: 0, right: 0 }}
+                  dragElastic={0.6}
+                  onDragStart={() => setIsDragging(true)}
+                  onDragEnd={(e, info) => {
+                    const swipe = info.offset.x;
+                    if (swipe < -60) {
+                      lightboxNext();
+                    } else if (swipe > 60) {
+                      lightboxPrev();
+                    }
+                    setTimeout(() => setIsDragging(false), 50);
+                  }}
+                  style={{ cursor: 'grab' }}
+                  whileDrag={{ cursor: 'grabbing' }}
                 />
               </AnimatePresence>
 
