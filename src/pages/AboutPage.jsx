@@ -107,7 +107,7 @@ export default function AboutPage() {
                         strokeDasharray="264" strokeDashoffset="2.64"
                         strokeLinecap="round" transform="rotate(-90 50 50)" />
                     </svg>
-                    <div className="circle-text">99%</div>
+                    <div className="circle-text">80%</div>
                   </div>
                   <div className="circle-label">Interior Design</div>
                 </div>
@@ -120,7 +120,7 @@ export default function AboutPage() {
                         strokeDasharray="264" strokeDashoffset="2.64"
                         strokeLinecap="round" transform="rotate(-90 50 50)" />
                     </svg>
-                    <div className="circle-text">99%</div>
+                    <div className="circle-text">78%</div>
                   </div>
                   <div className="circle-label">Architecture</div>
                 </div>
