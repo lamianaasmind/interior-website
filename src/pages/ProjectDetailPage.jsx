@@ -130,7 +130,7 @@ export default function ProjectDetailPage() {
                 <span className="sub-title">Project Details</span>
                 <h2>{project.title}</h2>
               </div>
-              
+
               <div className="project-info-specs">
                 <div className="spec-row">
                   <span className="spec-label">Project Name</span>
@@ -181,13 +181,13 @@ export default function ProjectDetailPage() {
             </motion.div>
 
             {/* Main Slider */}
-            <div 
+            <div
               className="proj-slider-wrap"
               onMouseEnter={() => setIsPaused(true)}
               onMouseLeave={() => setIsPaused(false)}
             >
-              <div 
-                className="proj-slider-stage" 
+              <div
+                className="proj-slider-stage"
                 onClick={() => {
                   if (!isDragging) {
                     openLightbox(sliderIndex);
@@ -224,8 +224,8 @@ export default function ProjectDetailPage() {
                 </AnimatePresence>
                 <div className="proj-slider-zoom-hint">
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                    <line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/>
+                    <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    <line x1="11" y1="8" x2="11" y2="14" /><line x1="8" y1="11" x2="14" y2="11" />
                   </svg>
                   Click to enlarge
                 </div>
@@ -236,12 +236,12 @@ export default function ProjectDetailPage() {
                 <>
                   <button className="proj-slider-arrow proj-slider-prev" onClick={goPrev} aria-label="Previous">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="15 18 9 12 15 6"/>
+                      <polyline points="15 18 9 12 15 6" />
                     </svg>
                   </button>
                   <button className="proj-slider-arrow proj-slider-next" onClick={goNext} aria-label="Next">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="9 18 15 12 9 6"/>
+                      <polyline points="9 18 15 12 9 6" />
                     </svg>
                   </button>
                 </>
@@ -314,7 +314,7 @@ export default function ProjectDetailPage() {
             >
               <button className="proj-lightbox-close" onClick={() => setLightboxOpen(false)} aria-label="Close">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                  <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                  <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
                 </svg>
               </button>
 
@@ -349,12 +349,12 @@ export default function ProjectDetailPage() {
 
               <button className="proj-lightbox-arrow proj-lightbox-prev" onClick={lightboxPrev} aria-label="Previous">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="15 18 9 12 15 6"/>
+                  <polyline points="15 18 9 12 15 6" />
                 </svg>
               </button>
               <button className="proj-lightbox-arrow proj-lightbox-next" onClick={lightboxNext} aria-label="Next">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="9 18 15 12 9 6"/>
+                  <polyline points="9 18 15 12 9 6" />
                 </svg>
               </button>
 
